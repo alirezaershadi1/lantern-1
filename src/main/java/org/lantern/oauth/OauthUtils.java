@@ -55,6 +55,8 @@ public class OauthUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(OauthUtils.class);
 
+    public static final String REVOKED_TOKEN_MESSAGE = "Problem with token -- maybe revoked?";
+    
     private long nextExpiryTime = System.currentTimeMillis();
     private final Model model;
     
@@ -211,7 +213,7 @@ public class OauthUtils {
             return lastResponse;
         } catch (final TokenResponseException e) {
             LOG.error("Token error -- maybe revoked or unauthorized?", e);
-            throw new IOException("Problem with token -- maybe revoked?", e);
+            throw new IOException(REVOKED_TOKEN_MESSAGE, e);
         } catch (final IOException e) {
             LOG.warn("IO exception while trying to refresh token.", e);
             throw e;

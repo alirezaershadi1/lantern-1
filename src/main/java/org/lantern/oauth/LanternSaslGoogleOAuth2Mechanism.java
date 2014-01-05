@@ -43,7 +43,15 @@ public class LanternSaslGoogleOAuth2Mechanism extends SASLMechanism {
     public void authenticate(String username, String host,
             ConnectionConfiguration conf) throws IOException, XMPPException {
         this.config = conf;
-        authenticate(username, host, config.getCallbackHandler());
+        try {
+            authenticate(username, host, config.getCallbackHandler());
+        } catch (IOException ioe) {
+            if (OauthUtils.REVOKED_TOKEN_MESSAGE.equals(ioe.getMessage())) {
+                throw new XMPPException(ioe.getMessage());
+            } else {
+                throw ioe;
+            }
+        }
     }
     
     @Override

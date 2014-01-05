@@ -42,10 +42,10 @@ public class Settings {
     private boolean proxyAllSites = false;
 
     private boolean useGoogleOAuth2 = false;
-    private String clientID;
-    private String clientSecret;
-    private String accessToken;
-    private String refreshToken;
+    private volatile String clientID;
+    private volatile String clientSecret;
+    private volatile String accessToken;
+    private volatile String refreshToken;
     
     private long expiryTime;
 

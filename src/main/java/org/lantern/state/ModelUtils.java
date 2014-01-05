@@ -1,6 +1,6 @@
 package org.lantern.state;
 
-import org.lantern.oauth.LanternGoogleOAuth2Credentials;
+import org.littleshoot.commom.xmpp.XmppCredentials;
 
 /**
  * Interface for utility methods depending on the state model.
@@ -15,7 +15,7 @@ public interface ModelUtils {
 
     boolean isOauthConfigured();
 
-    LanternGoogleOAuth2Credentials newGoogleOauthCreds(String resource);
+    XmppCredentials newGoogleOauthCreds(String resource);
 
     boolean isInClosedBeta(String email);
 

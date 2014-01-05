@@ -187,7 +187,7 @@ public final class PhotoServlet extends HttpServlet {
                 return conn;
             }
             
-            final LanternGoogleOAuth2Credentials  cred = 
+            final XmppCredentials  cred = 
                 this.modelUtils.newGoogleOauthCreds("vcard-connection");
 
             conn = XmppUtils.simpleGoogleTalkConnection(cred);

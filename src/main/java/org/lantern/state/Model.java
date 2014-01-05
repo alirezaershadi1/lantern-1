@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 public class Model {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+    
+    private static volatile Model s_instance;
 
     public static class Persistent {}
 
@@ -84,11 +86,16 @@ public class Model {
     private CountryService countryService;
 
     public Model() {
-        //used for JSON loading
+        s_instance = this;
     }
 
     public Model(CountryService countryService) {
+        this();
         this.countryService = countryService;
+    }
+    
+    public static Model getInstance() {
+        return s_instance;
     }
 
     private String instanceId;

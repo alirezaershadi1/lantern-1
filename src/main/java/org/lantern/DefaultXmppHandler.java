@@ -54,6 +54,7 @@ import org.lantern.proxy.UdtServerFiveTupleListener;
 import org.lantern.state.ClientFriend;
 import org.lantern.state.Connectivity;
 import org.lantern.state.FriendsHandler;
+import org.lantern.state.Modal;
 import org.lantern.state.Model;
 import org.lantern.state.ModelUtils;
 import org.lantern.state.SyncPath;
@@ -273,6 +274,7 @@ public class DefaultXmppHandler implements XmppHandler,
         case connecting:
             break;
         case LOGIN_FAILED:
+            Events.syncModal(model, Modal.authorize);
             this.roster.reset();
             break;
         }
@@ -453,12 +455,8 @@ public class DefaultXmppHandler implements XmppHandler,
         // This address doesn't appear to be used anywhere, setting to null
         final InetSocketAddress plainTextProxyRelayAddress = null;
 
-        if (this.client.get() == null) {
-            makeClient(plainTextProxyRelayAddress);
-        } else {
-            LOG.debug("Using existing client for xmpp handler: "+hashCode());
-        }
-
+        makeClient(plainTextProxyRelayAddress);
+        
         // This is a global, backup listener added to the client. We might
         // get notifications of messages twice in some cases, but that's
         // better than the alternative of sometimes not being notified
