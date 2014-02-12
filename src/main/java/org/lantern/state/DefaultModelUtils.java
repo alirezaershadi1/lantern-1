@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets.Details;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Utility methods that rely on all classes already having been bound using

@@ -17,7 +17,7 @@ import org.lantern.state.SyncPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * API for accessing the remote friends endpoint on the controller.

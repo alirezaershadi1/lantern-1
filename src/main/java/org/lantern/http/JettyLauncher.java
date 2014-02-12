@@ -41,8 +41,8 @@ import org.lantern.state.SyncService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Launcher and secure path handler for Jetty.

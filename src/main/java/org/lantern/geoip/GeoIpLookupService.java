@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.SystemUtils;
 import org.lantern.GeoData;
 
-import com.google.inject.Singleton;
+import javax.inject.Singleton;
 import com.maxmind.geoip.LookupService;
 
 /**

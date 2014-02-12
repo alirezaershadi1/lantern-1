@@ -10,7 +10,7 @@ import org.lantern.event.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Singleton;
+import javax.inject.Singleton;
 import com.mcdermottroe.apple.OSXKeychain;
 import com.mcdermottroe.apple.OSXKeychainException;
 

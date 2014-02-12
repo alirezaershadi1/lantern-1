@@ -41,8 +41,8 @@ import org.slf4j.LoggerFactory;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets.Details;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
+import javax.inject.Inject;
+import javax.inject.Injector;
 import com.google.inject.Module;
 
 public class TestUtils {

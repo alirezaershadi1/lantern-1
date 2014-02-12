@@ -11,8 +11,8 @@ import org.littleshoot.proxy.ChainedProxyManager;
 import org.littleshoot.proxy.FullFlowContext;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * HTTP proxy server for local requests from the browser to Lantern (i.e. in Get

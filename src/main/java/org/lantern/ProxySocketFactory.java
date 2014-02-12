@@ -17,7 +17,7 @@ import org.jivesoftware.smack.proxy.ProxyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Singleton;
+import javax.inject.Singleton;
 
 /**
  * {@link SocketFactory} for creating sockets through an HTTP proxy.

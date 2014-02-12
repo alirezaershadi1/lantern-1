@@ -21,11 +21,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
-import org.lantern.state.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Injector;
+import dagger.ObjectGraph;
 
 /**
  * End-to-end proxying test to make sure we're able to proxy access to
@@ -59,8 +58,8 @@ public class LanternProxyingTest {
         log.info("Finished launching");
         launcher.model.setSetupComplete(true);
         
-        final Injector injector = launcher.getInjector();
-        final ProxyTracker proxyTracker = injector.getInstance(ProxyTracker.class);
+        final ObjectGraph injector = launcher.getInjector();
+        final ProxyTracker proxyTracker = injector.get(ProxyTracker.class);
         
         final int max = 400;
         int tries = 0;

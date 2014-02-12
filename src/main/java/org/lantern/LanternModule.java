@@ -2,6 +2,7 @@ package org.lantern;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Timer;
 
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.kaleidoscope.BasicRandomRoutingTable;
 import org.kaleidoscope.RandomRoutingTable;
+import org.lantern.endpoints.FriendApi;
 import org.lantern.geoip.GeoIpLookupService;
 import org.lantern.http.GeoIp;
 import org.lantern.http.GoogleOauth2RedirectServlet;
@@ -20,6 +22,7 @@ import org.lantern.http.JettyLauncher;
 import org.lantern.http.PhotoServlet;
 import org.lantern.kscope.DefaultKscopeAdHandler;
 import org.lantern.kscope.KscopeAdHandler;
+import org.lantern.kscope.ReceivedKScopeAd;
 import org.lantern.monitoring.StatsReporter;
 import org.lantern.network.NetworkTracker;
 import org.lantern.oauth.LanternSaslGoogleOAuth2Mechanism;
@@ -58,12 +61,110 @@ import org.littleshoot.proxy.SslEngineSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import dagger.Module;
+import dagger.Provides;
 
-public class LanternModule extends AbstractModule {
+import javax.inject.Singleton;
 
+@Module(
+    injects = NetworkTracker.class,
+    injects = StatsReporter.class,
+    injects = LanternSocketsUtil.class,
+    injects = LanternXmppUtil.class,
+    injects = SyncService.class,
+    injects = TransfersIo.class,
+    injects = //EncryptedFileService.class).to(DefaultEncryptedFileService.class,
+    injects = BrowserService.class).to(ChromeBrowserService.class,
+injects = Transfers.class).toProvider(TransfersIo.class).in(Singleton.class,
+injects = Model.class).toProvider(ModelIo.class).in(Singleton.class,
+
+injects = ModelService.class).to(DefaultModelService.class,
+
+injects = RandomRoutingTable.class).to(BasicRandomRoutingTable.class,
+
+injects = //HttpsEverywhere.class,
+injects = Roster.class,
+injects = InteractionServlet.class,
+injects = LanternTrustStore.class,
+injects = PhotoServlet.class,
+injects = LogglyHelper.class,
+
+injects = Censored.class).to(DefaultCensored.class,
+injects = ProxyTracker.class).to(DefaultProxyTracker.class,
+injects = XmppHandler.class).to(DefaultXmppHandler.class,
+injects = //PeerProxyManager.class).to(DefaultPeerProxyManager.class,
+injects = GoogleOauth2RedirectServlet.class,
+injects = JettyLauncher.class,
+injects = AppIndicatorTray.class,
+injects = GetModeProxy.class,
+injects = StatsUpdater.class,
+injects = ConnectivityChecker.class,
+injects = GeoIp.class,
+injects = CountryService.class,
+injects = NotificationManager.class,
+injects = ChainedProxyManager.class).to(DispatchingChainedProxyManager.class,
+injects = SslEngineSource.class).to(CertTrackingSslEngineSource.class,
+injects = GetModeProxy.class,
+injects = GiveModeProxy.class,
+injects = UdtServerFiveTupleListener.class
+)
+
+public class LanternModule {
+
+
+    @Provides @Singleton 
+    public MessageService provideMessageService() {
+        return new SwingMessageService();
+    }
+    
+    @Provides @Singleton 
+    public KscopeAdHandler provideKscopeAdHandler(
+            final ProxyTracker proxyTracker,
+            final LanternTrustStore trustStore,
+            final RandomRoutingTable routingTable,
+            final NetworkTracker<String, URI, ReceivedKScopeAd> networkTracker) {
+        return new DefaultKscopeAdHandler(proxyTracker, trustStore, 
+                routingTable, networkTracker);
+    }
+
+    @Provides @Singleton 
+    public FriendsHandler provideFriendsHandler(final Model model, final FriendApi api,
+            final XmppHandler xmppHandler, 
+            final NotificationManager notificationManager,
+            final NetworkTracker<String, URI, ReceivedKScopeAd> networkTracker,
+            final Messages msgs) {
+        return new DefaultFriendsHandler(model, api, xmppHandler, notificationManager, networkTracker, msgs);
+    }
+    @Provides @Singleton 
+    public PeerFactory providePeerFactory(final GeoIpLookupService geoIpLookupService,
+            final Model model,
+            final Roster roster) {
+        return new DefaultPeerFactory(geoIpLookupService, model, roster);
+    }
+    
+    @Provides @Singleton 
+    public ProxyService provideProxyService(final MessageService messageService,
+            final ModelUtils modelUtils, final Model model, 
+            final ProxyTracker proxyTracker) {
+        return new Proxifier(messageService, modelUtils, model, proxyTracker);
+    }
+    
+    @Provides @Singleton 
+    public SyncStrategy provideSyncStrategy() {
+        return new CometDSyncStrategy();
+    }
+                    
+    @Provides @Singleton 
+    public ClientStats provideClientStats(final GeoIpLookupService lookupService,
+            final CountryService countryService) {
+        return new StatsTracker(lookupService, countryService);
+    }
+    
+    @Provides @Singleton 
+    public ModelUtils provideModelUtils(final Model model) {
+        return new DefaultModelUtils(model);
+    }
+    
     private static final Logger log =
         LoggerFactory.getLogger(LanternModule.class);
     
@@ -85,61 +186,10 @@ public class LanternModule extends AbstractModule {
         return s_instance;
     }
     
-    @Override
-    protected void configure() {
+
+    public LanternModule() {
         SASLAuthentication.registerSASLMechanism("X-OAUTH2",
-            LanternSaslGoogleOAuth2Mechanism.class);
-
-        bind(NetworkTracker.class);
-        bind(ModelUtils.class).to(DefaultModelUtils.class);
-        bind(ClientStats.class).to(StatsTracker.class);
-        bind(StatsReporter.class);
-        bind(LanternSocketsUtil.class);
-        bind(LanternXmppUtil.class);
-        bind(MessageService.class).to(SwingMessageService.class);
-        bind(KscopeAdHandler.class).to(DefaultKscopeAdHandler.class);
-
-        bind(FriendsHandler.class).to(DefaultFriendsHandler.class);
-        bind(PeerFactory.class).to(DefaultPeerFactory.class);
-        bind(ProxyService.class).to(Proxifier.class);
-        bind(SyncStrategy.class).to(CometDSyncStrategy.class);
-        bind(SyncService.class);
-        bind(TransfersIo.class);
-        //bind(EncryptedFileService.class).to(DefaultEncryptedFileService.class);
-        bind(BrowserService.class).to(ChromeBrowserService.class);
-        bind(Transfers.class).toProvider(TransfersIo.class).in(Singleton.class);
-        bind(Model.class).toProvider(ModelIo.class).in(Singleton.class);
-
-        bind(ModelService.class).to(DefaultModelService.class);
-
-        bind(RandomRoutingTable.class).to(BasicRandomRoutingTable.class);
-
-        //bind(HttpsEverywhere.class);
-        bind(Roster.class);
-        bind(InteractionServlet.class);
-        bind(LanternTrustStore.class);
-        bind(PhotoServlet.class);
-        bind(LogglyHelper.class);
-
-        bind(Censored.class).to(DefaultCensored.class);
-        bind(ProxyTracker.class).to(DefaultProxyTracker.class);
-        bind(XmppHandler.class).to(DefaultXmppHandler.class);
-        //bind(PeerProxyManager.class).to(DefaultPeerProxyManager.class);
-        bind(GoogleOauth2RedirectServlet.class);
-        bind(JettyLauncher.class);
-        bind(AppIndicatorTray.class);
-        bind(GetModeProxy.class);
-        bind(StatsUpdater.class);
-        bind(ConnectivityChecker.class);
-        bind(GeoIp.class);
-        bind(CountryService.class);
-        bind(NotificationManager.class);
-        bind(ChainedProxyManager.class).to(DispatchingChainedProxyManager.class);
-        bind(SslEngineSource.class).to(CertTrackingSslEngineSource.class);
-        bind(GetModeProxy.class);
-        bind(GiveModeProxy.class);
-        bind(UdtServerFiveTupleListener.class);
-
+                LanternSaslGoogleOAuth2Mechanism.class);
         try {
             copyFireFoxExtension();
         } catch (final IOException e) {

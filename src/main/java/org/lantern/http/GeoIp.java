@@ -11,7 +11,7 @@ import org.lantern.state.Model;
 import org.lantern.state.SyncPath;
 
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 public class GeoIp {
 

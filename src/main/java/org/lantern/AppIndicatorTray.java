@@ -3,6 +3,9 @@ package org.lantern;
 import java.io.File;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang3.SystemUtils;
 import org.lantern.event.Events;
 import org.lantern.event.GoogleTalkStateEvent;
@@ -18,8 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 

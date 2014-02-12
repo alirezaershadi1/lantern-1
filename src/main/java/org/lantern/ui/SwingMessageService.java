@@ -11,7 +11,7 @@ import org.lantern.event.Events;
 import org.lantern.event.MessageEvent;
 
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Singleton;
+import javax.inject.Singleton;
 
 @Singleton
 public class SwingMessageService implements MessageService {

@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.lantern.annotation.Keep;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 @Keep

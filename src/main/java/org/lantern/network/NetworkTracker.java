@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Singleton;
+import javax.inject.Singleton;
 
 /**
  * <p>

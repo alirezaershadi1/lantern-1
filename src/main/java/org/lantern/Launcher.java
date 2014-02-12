@@ -52,8 +52,8 @@ import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.ResourceUDT;
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+
+import dagger.ObjectGraph;
 
 /**
  * Launches a new Lantern HTTP proxy.
@@ -108,7 +108,7 @@ public class Launcher {
         }
     };
 
-    private Injector injector;
+    private ObjectGraph injector;
     private SystemTray systemTray;
     Model model;
     private ModelUtils modelUtils;
@@ -188,7 +188,9 @@ public class Launcher {
             StopwatchManager.getStopwatch("Guice-Injector", 
                 STOPWATCH_LOG, STOPWATCH_GROUP);
         injectorWatch.start();
-        injector = Guice.createInjector(this.lanternModule);
+        
+        injector = ObjectGraph.create(this.lanternModule);
+        //injector = Guice.createInjector(this.lanternModule);
         injectorWatch.stop();
         LOG.debug("Creating display...");
 
@@ -390,7 +392,7 @@ public class Launcher {
         watch.start();
         
         LOG.debug("Loading {}", name);
-        final T inst = injector.getInstance(clazz);
+        final T inst = injector.get(clazz);
         if (Shutdownable.class.isAssignableFrom(clazz)) {
             addShutdownHook((Shutdownable) inst);
         }
@@ -785,7 +787,7 @@ public class Launcher {
     }
     */
 
-    public Injector getInjector() {
+    public ObjectGraph getInjector() {
         return injector;
     }
 }

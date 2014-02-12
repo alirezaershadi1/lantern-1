@@ -15,7 +15,7 @@ import org.lantern.state.Model.Run;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Singleton;
+import javax.inject.Singleton;
 
 /**
  * Strategy for syncing/pushing with the browser using cometd.

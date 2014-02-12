@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Class that keeps track of all roster entries.

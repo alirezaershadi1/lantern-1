@@ -11,10 +11,7 @@ import org.lastbamboo.common.portmapping.PortMapListener;
 import org.lastbamboo.common.portmapping.PortMappingProtocol;
 import org.lastbamboo.common.portmapping.UpnpService;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.util.Modules;
+import dagger.ObjectGraph;
 
 public class LanternModuleTest {
 
@@ -50,7 +47,7 @@ public class LanternModuleTest {
         });
 
         Module m = Modules.override(lm).with(new TestModule());
-        final Injector injector = Guice.createInjector(m);
+        final ObjectGraph injector = ObjectGraph.create(m);
 
         final LanternService xmpp =
             injector.getInstance(DefaultXmppHandler.class);
